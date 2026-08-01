@@ -181,7 +181,6 @@
 
 <script>
 const CONFIG = {
-  // TODO: đổi thành đường dẫn raw GitHub tới photos.json sau khi anh push repo mới
   jsonUrl: 'https://raw.githubusercontent.com/tcr-challenge/K43/main/photos.json',
 };
 
@@ -393,7 +392,24 @@ function jumpTo(idx) {
 }
 
 function onLbImgLoad() { const img = document.getElementById('lb-img'); if (img) img.classList.remove('hidden'); document.getElementById('lb-spinner')?.remove(); }
-function onLbImgError() { document.getElementById('lb-spinner').textContent = 'Không tải được ảnh'; }
+
+function onLbImgError() {
+  const img = document.getElementById('lb-img');
+  if (!img) return;
+  if (!img.dataset.fallbackTried) {
+    // Thử lại bằng endpoint "thumbnail" kích thước lớn — ổn định hơn "uc?export=view"
+    const p = currentList[lbIndex];
+    const src = img.src || p.thumb || '';
+    const m = src.match(/id=([a-zA-Z0-9_-]+)/) || (p.full || '').match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (m) {
+      img.dataset.fallbackTried = '1';
+      img.src = `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1920`;
+      return;
+    }
+  }
+  const sp = document.getElementById('lb-spinner');
+  if (sp) sp.textContent = 'Không tải được ảnh';
+}
 
 function lbNav(dir) {
   lbIndex = (lbIndex + dir + currentList.length) % currentList.length;
