@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kỷ Yếu Ảnh — Hội Khóa K43 THPT Xuân Đỉnh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c27; --border: #2a2a3d;
+    --accent: #f7c948; --accent2: #ff6b35; --text: #f0f0f5; --muted: #7070a0;
+    --success: #4ade80; --radius: 12px; --thumb-w: 200px; --thumb-ratio: 3/2;
+    --font-display: 'Montserrat', 'Segoe UI', sans-serif;
+    --font-body: 'Open Sans', 'Segoe UI', Roboto, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; padding-bottom: 70px; }
+  a { color: inherit; }
+
+  /* ══ HERO ══ */
+  .hero { position: relative; padding: 0; overflow: hidden; min-height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .hero-bg { position: absolute; inset: 0; background: linear-gradient(160deg, #241226 0%, #14172e 45%, #0a0a0f 100%); z-index: 0; }
+  .hero-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% -10%, rgba(247,201,72,0.14), transparent 60%); }
+  .hero-content { position: relative; z-index: 2; width: 100%; text-align: center; padding: 48px 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .hero-logo { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; margin-bottom: 18px; background: var(--surface2); border: 2px solid rgba(247,201,72,0.4); box-shadow: 0 6px 24px rgba(0,0,0,0.4); }
+  .hero-logo.placeholder { display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--muted); }
+  .hero h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(24px, 5vw, 40px); letter-spacing: 1px; line-height: 1.3; margin: 0 0 10px; text-transform: uppercase; color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero-tagline { font-family: var(--font-display); font-weight: 700; font-size: clamp(13px, 2.2vw, 17px); letter-spacing: 1px; color: rgba(247,201,72,0.9); margin-bottom: 30px; }
+
+  /* ══ TABS ══ */
+  .tabs-outer { max-width: 720px; width: 100%; margin: 0 auto; padding: 0 16px; }
+  .tabs-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .tab-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+  .tab-btn.active { background: linear-gradient(135deg, rgba(247,201,72,0.18), rgba(255,107,53,0.1)); border-color: var(--accent); color: var(--accent); }
+  .tab-btn .tab-icon { font-size: 15px; }
+  .tab-btn .tab-count { background: rgba(247,201,72,0.14); color: var(--accent); font-family: var(--font-body); font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 20px; }
+
+  /* ══ SECTIONS / GRID ══ */
+  .section { padding: 32px 20px; max-width: 1200px; margin: 0 auto; }
+  .section-title { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .count-badge { background: var(--surface2); border: 1px solid var(--border); padding: 2px 10px; border-radius: 20px; font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--accent); }
+
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--thumb-w), 1fr)); gap: 10px; }
+  .photo-card { position: relative; aspect-ratio: var(--thumb-ratio); border-radius: 10px; overflow: hidden; cursor: pointer; background: var(--surface2); border: 1px solid var(--border); transition: all 0.18s; }
+  .photo-card:hover { transform: scale(1.03); border-color: var(--accent); box-shadow: 0 0 18px rgba(247,201,72,0.18); z-index: 2; }
+  .photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-card .tab-tag { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); color: var(--accent); font-family: var(--font-display); font-weight: 700; font-size: 10px; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 4px; }
+  .photo-card .video-badge { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); }
+  .photo-card .video-badge svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6)); }
+  .skeleton { background: linear-gradient(90deg, var(--surface2) 25%, var(--surface) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-family: var(--font-body); font-size: 14px; }
+
+  .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 26px; flex-wrap: wrap; }
+  .page-btn { width: 38px; height: 38px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .page-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .page-btn.active { background: var(--accent); color: #0a0a0f; border-color: var(--accent); font-weight: 700; }
+  .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ══ LIGHTBOX ══ */
+  .lightbox { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.93); backdrop-filter: blur(14px); align-items: center; justify-content: center; flex-direction: column; padding: 16px; cursor: pointer; }
+  .lightbox.open { display: flex; }
+  .lb-close { position: absolute; top: 18px; right: 18px; background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10; }
+  .lb-close:hover { background: var(--accent); color: #0a0a0f; border-color: var(--accent); }
+  .lb-main { position: relative; display: flex; align-items: center; justify-content: center; max-width: 92vw; max-height: 74vh; flex: 1; cursor: default; }
+  .lb-img { max-width: 88vw; max-height: 72vh; border-radius: 10px; object-fit: contain; display: block; box-shadow: 0 20px 60px rgba(0,0,0,0.6); transition: opacity 0.2s; cursor: default; }
+  .lb-img.hidden { opacity: 0; }
+  .lb-video { width: min(88vw, 900px); height: min(72vh, 506px); border-radius: 10px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.6); background: #000; }
+  .lb-spinner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; }
+  .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(10,10,15,0.75); border: 1px solid var(--border); color: var(--text); width: 50px; height: 50px; border-radius: 50%; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px); z-index: 5; }
+  .lb-nav:hover { border-color: var(--accent); color: var(--accent); background: rgba(10,10,15,0.95); }
+  #lb-prev { left: -64px; } #lb-next { right: -64px; }
+  .lb-info { margin-top: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: default; }
+  .lb-tab-label { font-family: var(--font-display); font-weight: 800; font-size: 15px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+  .lb-counter { font-family: var(--font-body); font-size: 13px; font-weight: 400; color: var(--muted); }
+  .lb-folder-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); text-decoration: none; font-family: var(--font-body); font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .lb-folder-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .lb-thumbs { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 2px; max-width: 88vw; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--border) transparent; margin-top: 10px; cursor: default; }
+  .lb-thumbs::-webkit-scrollbar { height: 3px; }
+  .lb-thumb { flex-shrink: 0; width: 76px; height: 52px; border-radius: 6px; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: all 0.16s; background: var(--surface2); position: relative; }
+  .lb-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lb-thumb:hover { border-color: var(--muted); }
+  .lb-thumb.active { border-color: var(--accent); }
+  .lb-thumb .lb-thumb-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.25); font-size: 16px; }
+  @media (max-width: 680px) { #lb-prev { left: 4px; } #lb-next { right: 4px; } .lb-img { max-height: 52vh; } .lb-video { height: 42vh; } .lb-thumbs { max-width: 94vw; } }
+
+  /* ══ LOADING ══ */
+  .app-loading { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(10,10,15,0.88); backdrop-filter: blur(10px); flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .app-loading.show { display: flex; }
+  .app-loading-icon { font-size: 54px; animation: bounce 0.8s ease-in-out infinite alternate; }
+  @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-18px); } }
+  .app-loading-text { font-family: var(--font-body); font-size: 14px; color: var(--muted); }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 13px 18px; border-radius: 10px; font-family: var(--font-body); font-size: 14px; font-weight: 500; z-index: 3000; transform: translateY(100px); opacity: 0; transition: all 0.3s; max-width: 300px; }
+  .toast.show { transform: none; opacity: 1; }
+  .toast.error { border-color: #f87171; color: #f87171; }
+
+  /* ══ STATS WIDGET ══ */
+  .stats-widget { position: fixed; bottom: 16px; left: 16px; z-index: 900; display: flex; gap: 6px; }
+  .stat-pill { display: flex; align-items: center; gap: 7px; padding: 7px 13px; background: rgba(19,19,26,0.9); border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--muted); backdrop-filter: blur(10px); }
+  .stat-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .stat-dot.online { background: var(--success); animation: pulse-dot 2s ease-in-out infinite; }
+  .stat-dot.visits { background: var(--accent); }
+  @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  @media (max-width: 600px) {
+    :root { --thumb-w: 130px; }
+    .hero { min-height: 320px; }
+    .lb-tab-label { font-size: 13px; }
+    .stats-widget { left: 0; right: 0; bottom: 0; justify-content: center; padding: 8px; background: rgba(10,10,15,0.95); border-top: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-loading" id="app-loading">
+  <div class="app-loading-icon">📷</div>
+  <div class="app-loading-text">Đang tải ảnh, chờ chút nha...</div>
+</div>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <!-- Đổi src bên dưới thành logo thật của trường/khóa khi có -->
+    <img class="hero-logo" src="images/logo.png" alt="Logo"
+         onerror="this.classList.add('placeholder'); this.removeAttribute('src'); this.textContent='🎓';">
+    <h1>HỘI KHÓA K43<br><em>TRƯỜNG THPT XUÂN ĐỈNH</em></h1>
+    <div class="hero-tagline">Thanh xuân rực rỡ - Vang khúc tri ân</div>
+
+    <div class="tabs-outer">
+      <div class="tabs-wrap" id="tabs-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GALLERY ══ -->
+<div class="section" id="gallery-section">
+  <div class="section-title" id="gallery-title">TẤT CẢ <span class="count-badge" id="total-count">--</span></div>
+  <div class="photo-grid" id="gallery-grid"></div>
+  <div class="empty-state" id="empty-state" style="display:none;">Chưa có ảnh nào trong mục này.</div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lightbox" id="lightbox" onclick="handleLightboxBackdropClick(event)">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <div class="lb-main" onclick="event.stopPropagation()">
+    <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">‹</button>
+    <div style="position:relative;" id="lb-media-wrap">
+      <div class="lb-spinner" id="lb-spinner">Đang tải...</div>
+      <img class="lb-img hidden" id="lb-img" src="" alt="" onload="onLbImgLoad()" onerror="onLbImgError()">
+    </div>
+    <button class="lb-nav" id="lb-next" onclick="lbNav(1)">›</button>
+  </div>
+  <div class="lb-info" onclick="event.stopPropagation()">
+    <div class="lb-tab-label" id="lb-tab-label"></div>
+    <div class="lb-counter" id="lb-counter"></div>
+    <a class="lb-folder-btn" id="lb-folder-btn" href="#" target="_blank">📁 Mở thư mục Google Drive</a>
+  </div>
+  <div class="lb-thumbs" id="lb-thumbs" onclick="event.stopPropagation()"></div>
+</div>
+
+<footer style="border-top:1px solid var(--border);margin-top:40px;padding:36px 24px 28px;text-align:center;background:var(--surface);">
+  <div style="font-family:var(--font-display);font-weight:800;font-size:clamp(14px,3vw,18px);letter-spacing:1.5px;color:var(--accent);margin-bottom:6px;">HỘI KHÓA K43 - TRƯỜNG THPT XUÂN ĐỈNH</div>
+  <div style="font-family:var(--font-display);font-weight:600;font-size:clamp(11px,2vw,13px);letter-spacing:1px;color:var(--muted);">Thanh xuân rực rỡ - Vang khúc tri ân</div>
+</footer>
+
+<!-- STATS WIDGET (đổi sang project Firebase riêng nếu muốn số liệu độc lập) -->
+<div class="stats-widget" id="stats-widget">
+  <div class="stat-pill"><span class="stat-dot online"></span><span id="online-count">--</span> online</div>
+  <div class="stat-pill"><span class="stat-dot visits"></span><span id="visits-count">--</span> views</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CONFIG = {
+  // TODO: đổi thành đường dẫn raw GitHub tới photos.json sau khi anh push repo mới
+  jsonUrl: 'https://raw.githubusercontent.com/REPO_OWNER/REPO_NAME/main/photos.json',
+};
+
+// Icon mặc định cho các tab hay gặp, tab lạ sẽ dùng icon mặc định 🗂️
+const TAB_ICONS = { 'anh': '📷', 'clip': '🎬', 'hau-truong': '🎭' };
+
+const IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 600;
+const PAGE_SIZE = IS_MOBILE ? 24 : 48;
+
+let PHOTOS = [];
+let TABS = [];             // [{slug, label, count}]
+let currentTab = 'all';
+let currentPage = 1;
+let currentList = [];      // danh sách ảnh đang hiển thị (theo tab hiện tại)
+let lbIndex = 0;
+
+document.addEventListener('DOMContentLoaded', fetchAll);
+
+async function fetchAll() {
+  document.getElementById('app-loading').classList.add('show');
+  try {
+    const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    PHOTOS = await res.json();
+    buildTabs();
+    renderTabs();
+    setTab('all');
+  } catch (e) {
+    console.warn(e);
+    showToast('Lỗi tải dữ liệu: ' + e.message, true);
+    loadDemoData();
+  } finally {
+    document.getElementById('app-loading').classList.remove('show');
+  }
+}
+
+function loadDemoData() {
+  const demoTabs = [{slug:'anh', label:'Ảnh'}, {slug:'clip', label:'Clip'}, {slug:'hau-truong', label:'Hậu trường'}];
+  PHOTOS = Array.from({length: 60}, (_, i) => {
+    const t = demoTabs[i % demoTabs.length];
+    return {
+      id: 'demo_' + i, tab: t.slug, tabLabel: t.label,
+      type: t.slug === 'clip' ? 'video' : 'image',
+      thumb: 'https://picsum.photos/seed/k43-' + i + '/300/200',
+      full: 'https://picsum.photos/seed/k43-' + i + '/1200/800',
+      folderUrl: '#', name: 'demo_' + i, createdTime: ''
+    };
+  });
+  buildTabs(); renderTabs(); setTab('all');
+}
+
+function buildTabs() {
+  const map = new Map();
+  for (const p of PHOTOS) {
+    const slug = p.tab || 'khac';
+    const label = p.tabLabel || slug;
+    if (!map.has(slug)) map.set(slug, { slug, label, count: 0 });
+    map.get(slug).count++;
+  }
+  TABS = Array.from(map.values()).sort((a, b) => a.label.localeCompare(b.label, 'vi'));
+}
+
+function renderTabs() {
+  const wrap = document.getElementById('tabs-wrap');
+  const allBtn = tabButtonHtml('all', 'TẤT CẢ', PHOTOS.length, '🗂️');
+  const tabBtns = TABS.map(t => tabButtonHtml(t.slug, t.label.toUpperCase(), t.count, TAB_ICONS[t.slug] || '🗂️')).join('');
+  wrap.innerHTML = allBtn + tabBtns;
+}
+
+function tabButtonHtml(slug, label, count, icon) {
+  return `<button class="tab-btn" id="tabbtn-${slug}" onclick="setTab('${slug}')">
+    <span class="tab-icon">${icon}</span>${label}<span class="tab-count">${count}</span>
+  </button>`;
+}
+
+function setTab(slug) {
+  currentTab = slug;
+  currentPage = 1;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('tabbtn-' + slug);
+  if (btn) btn.classList.add('active');
+
+  currentList = slug === 'all' ? PHOTOS : PHOTOS.filter(p => p.tab === slug);
+  const label = slug === 'all' ? 'TẤT CẢ' : (TABS.find(t => t.slug === slug)?.label.toUpperCase() || slug.toUpperCase());
+  document.getElementById('gallery-title').innerHTML = label + ' <span class="count-badge" id="total-count">' + currentList.length.toLocaleString('vi-VN') + '</span>';
+
+  renderGrid();
+  window.scrollTo({ top: document.getElementById('gallery-section').offsetTop - 20, behavior: 'smooth' });
+}
+
+function renderGrid() {
+  const grid = document.getElementById('gallery-grid');
+  const emptyState = document.getElementById('empty-state');
+  if (!currentList.length) {
+    grid.innerHTML = '';
+    emptyState.style.display = 'block';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  const totalPages = Math.ceil(currentList.length / PAGE_SIZE);
+  currentPage = Math.min(currentPage, totalPages) || 1;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = currentList.slice(start, start + PAGE_SIZE);
+
+  grid.innerHTML = pageItems.map((p, i) => {
+    const globalIdx = start + i;
+    const videoBadge = p.type === 'video'
+      ? '<div class="video-badge"><svg width="40" height="40" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.45)"/><path d="M10 8l6 4-6 4V8z" fill="white"/></svg></div>'
+      : '';
+    const img = p.thumb
+      ? `<img loading="lazy" src="${p.thumb}" alt="${escapeHtml(p.name || '')}">`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface2);">🎬</div>`;
+    return `<div class="photo-card" onclick="openLightbox(${globalIdx})">
+      ${img}
+      ${videoBadge}
+      <span class="tab-tag">${escapeHtml(p.tabLabel || p.name || '')}</span>
+    </div>`;
+  }).join('');
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  const el = document.getElementById('pagination');
+  if (totalPages <= 1) { el.innerHTML = ''; return; }
+  let html = '';
+  html += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goPage(${currentPage - 1})">‹</button>`;
+  const range = pageRange(currentPage, totalPages);
+  for (const p of range) {
+    html += p === '...' ? `<span style="color:var(--muted);padding:0 4px;">…</span>`
+      : `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`;
+  }
+  html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goPage(${currentPage + 1})">›</button>`;
+  el.innerHTML = html;
+}
+
+function pageRange(cur, total) {
+  const delta = 2, range = [];
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || (i >= cur - delta && i <= cur + delta)) range.push(i);
+  }
+  const out = [];
+  let prev = 0;
+  for (const p of range) { if (prev && p - prev > 1) out.push('...'); out.push(p); prev = p; }
+  return out;
+}
+
+function goPage(p) {
+  currentPage = p;
+  renderGrid();
+  window.scrollTo({ top: document.getElementById('gallery-section').offsetTop - 20, behavior: 'smooth' });
+}
+
+/* ══ LIGHTBOX ══ */
+function openLightbox(globalIdx) {
+  lbIndex = globalIdx;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderLbMedia();
+}
+
+function renderLbMedia() {
+  const p = currentList[lbIndex];
+  if (!p) return;
+  const wrap = document.getElementById('lb-media-wrap');
+  const spinner = document.getElementById('lb-spinner');
+
+  if (p.type === 'video') {
+    wrap.innerHTML = `<div class="lb-spinner" id="lb-spinner">Đang tải...</div><iframe class="lb-video" src="${p.full}" allow="autoplay" allowfullscreen onload="document.getElementById('lb-spinner')?.remove()"></iframe>`;
+  } else {
+    wrap.innerHTML = `<div class="lb-spinner" id="lb-spinner">Đang tải ảnh...</div><img class="lb-img hidden" id="lb-img" src="${p.full}" alt="" onload="onLbImgLoad()" onerror="onLbImgError()">`;
+  }
+
+  document.getElementById('lb-tab-label').textContent = p.tabLabel || '';
+  document.getElementById('lb-counter').textContent = (lbIndex + 1) + ' / ' + currentList.length;
+  const folderBtn = document.getElementById('lb-folder-btn');
+  folderBtn.href = p.folderUrl || '#';
+  folderBtn.textContent = p.type === 'video' ? '🔗 Mở link gốc' : '📁 Mở thư mục Google Drive';
+
+  renderLbThumbs();
+}
+
+function renderLbThumbs() {
+  const wrap = document.getElementById('lb-thumbs');
+  // Giới hạn cửa sổ thumbnail quanh ảnh hiện tại để tránh render quá nhiều DOM cùng lúc
+  const WINDOW = 40;
+  const start = Math.max(0, lbIndex - WINDOW);
+  const end = Math.min(currentList.length, lbIndex + WINDOW + 1);
+  let html = '';
+  for (let i = start; i < end; i++) {
+    const p = currentList[i];
+    if (!p) continue;
+    const thumbSrc = p.thumb || '';
+    const playIcon = p.type === 'video' ? '<span class="lb-thumb-play">▶️</span>' : '';
+    html += `<div class="lb-thumb ${i === lbIndex ? 'active' : ''}" onclick="jumpTo(${i})">
+      ${thumbSrc ? `<img src="${thumbSrc}" alt="" loading="lazy">` : ''}${playIcon}
+    </div>`;
+  }
+  wrap.innerHTML = html;
+  const activeEl = wrap.querySelector('.lb-thumb.active');
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest', inline: 'center' });
+}
+
+function jumpTo(idx) {
+  lbIndex = idx;
+  renderLbMedia();
+}
+
+function onLbImgLoad() { const img = document.getElementById('lb-img'); if (img) img.classList.remove('hidden'); document.getElementById('lb-spinner')?.remove(); }
+function onLbImgError() { document.getElementById('lb-spinner').textContent = 'Không tải được ảnh'; }
+
+function lbNav(dir) {
+  lbIndex = (lbIndex + dir + currentList.length) % currentList.length;
+  renderLbMedia();
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('lb-media-wrap').innerHTML = '<div class="lb-spinner" id="lb-spinner">Đang tải...</div><img class="lb-img hidden" id="lb-img" src="" alt="" onload="onLbImgLoad()" onerror="onLbImgError()">';
+  document.getElementById('lb-thumbs').innerHTML = '';
+}
+
+function handleLightboxBackdropClick(e) { if (e.target.id === 'lightbox') closeLightbox(); }
+
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+});
+
+/* ══ HELPERS ══ */
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ══ STATS WIDGET (Firebase realtime online/views — tuỳ chọn) ══ */
+(function () {
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9kOdlwT6jEtX3QdNZyq8h7khuNoammS8",
+    authDomain: "bcds2026-9c6a6.firebaseapp.com",
+    databaseURL: "https://bcds2026-9c6a6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "bcds2026-9c6a6",
+    storageBucket: "bcds2026-9c6a6.firebasestorage.app",
+    messagingSenderId: "354115933539",
+    appId: "1:354115933539:web:f4c49fb913d494f92fef56"
+  };
+  const s1 = document.createElement('script');
+  s1.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js';
+  s1.onload = () => {
+    const s2 = document.createElement('script');
+    s2.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js';
+    s2.onload = () => initFirebase(firebaseConfig);
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s1);
+})();
+
+function initFirebase(config) {
+  try {
+    firebase.initializeApp(config);
+    const db = firebase.database();
+    const connRef = db.ref('.info/connected');
+    const onlineRef = db.ref('online_users_k43');
+    const visitsRef = db.ref('total_visits_k43');
+    const myRef = onlineRef.push();
+    connRef.on('value', snap => { if (!snap.val()) return; myRef.onDisconnect().remove(); myRef.set({ t: Date.now() }); });
+    onlineRef.on('value', snap => { const el = document.getElementById('online-count'); if (el) el.textContent = snap.numChildren(); });
+    visitsRef.transaction(cur => (cur || 0) + 1);
+    visitsRef.on('value', snap => { const el = document.getElementById('visits-count'); if (el) el.textContent = (snap.val() || 0).toLocaleString('vi-VN'); });
+  } catch (e) {
+    console.warn('Firebase error:', e);
+    const w = document.getElementById('stats-widget');
+    if (w) w.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
