@@ -179,19 +179,32 @@
   .toast.show { transform: none; opacity: 1; }
   .toast.error { border-color: #f87171; color: #f87171; }
 
-  /* ══ STATS WIDGET ══ */
-  .stats-widget { position: fixed; bottom: 16px; left: 16px; z-index: 900; display: flex; gap: 6px; }
-  .stat-pill { display: flex; align-items: center; gap: 7px; padding: 7px 13px; background: rgba(19,19,26,0.9); border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--muted); backdrop-filter: blur(10px); }
+  /* ══ STATS WIDGET (xếp dọc: Thả tim / Online / Views) ══ */
+  .stats-widget { position: fixed; bottom: 16px; left: 16px; z-index: 900; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .stat-pill { display: flex; align-items: center; gap: 8px; padding: 7px 14px; background: rgba(19,19,26,0.9); border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--muted); backdrop-filter: blur(10px); }
   .stat-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
   .stat-dot.online { background: var(--success); animation: pulse-dot 2s ease-in-out infinite; }
   .stat-dot.visits { background: var(--accent); }
   @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
+  /* Pill "Thả tim" — bấm để thả tim, số lượt tim hiện realtime */
+  .heart-pill { border: none; cursor: pointer; padding: 6px 16px 6px 14px; font-family: var(--font-body); color: var(--text); font-size: 13px; font-weight: 600; transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent; }
+  .heart-pill:hover { transform: scale(1.04); }
+  .heart-pill:active { transform: scale(0.94); }
+  .heart-icon-wrap { position: relative; width: 27px; height: 27px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 35% 30%, #3a151f, #170a0d); box-shadow: 0 0 0 1px rgba(255,84,112,0.4), 0 0 10px rgba(255,60,90,0.25); }
+  .heart-icon { font-size: 14px; line-height: 1; filter: drop-shadow(0 0 5px rgba(255,60,90,0.8)); animation: heart-idle-beat 2.2s ease-in-out infinite; }
+  @keyframes heart-idle-beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.16); } }
+  #hearts-count { color: var(--text); font-weight: 700; }
+  .floating-heart { position: absolute; bottom: 60%; left: 50%; font-size: 12px; color: #ff5470; pointer-events: none; animation: heart-float 0.9s ease-out forwards; }
+  @keyframes heart-float { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.6); } 100% { opacity: 0; transform: translate(calc(-50% + var(--dx, 0px)), -36px) scale(1.1); } }
+
   @media (max-width: 600px) {
     :root { --thumb-w: 130px; --logo-w: 72px; }
     .hero { min-height: 320px; }
     .lb-tab-label { font-size: 13px; }
-    .stats-widget { left: 0; right: 0; bottom: 0; justify-content: center; padding: 8px; background: rgba(10,10,15,0.95); border-top: 1px solid var(--border); }
+    .stats-widget { bottom: 14px; left: 12px; }
+    .stat-pill { font-size: 11.5px; padding: 6px 12px; }
   }
 </style>
 </head>
@@ -291,6 +304,11 @@
 
 <!-- STATS WIDGET (đổi sang project Firebase riêng nếu muốn số liệu độc lập) -->
 <div class="stats-widget" id="stats-widget">
+  <button class="stat-pill heart-pill" id="heart-btn" onclick="sendHeart()" aria-label="Thả tim">
+    <span>Thả</span>
+    <span class="heart-icon-wrap"><span class="heart-icon">❤️</span></span>
+    <span id="hearts-count">--</span>
+  </button>
   <div class="stat-pill"><span class="stat-dot online"></span><span id="online-count">--</span> online</div>
   <div class="stat-pill"><span class="stat-dot visits"></span><span id="visits-count">--</span> views</div>
 </div>
@@ -665,11 +683,43 @@ function initFirebase(config) {
     onlineRef.on('value', snap => { const el = document.getElementById('online-count'); if (el) el.textContent = snap.numChildren(); });
     visitsRef.transaction(cur => (cur || 0) + 1);
     visitsRef.on('value', snap => { const el = document.getElementById('visits-count'); if (el) el.textContent = (snap.val() || 0).toLocaleString('vi-VN'); });
+
+    // ── Thả tim ──
+    const heartsRef = db.ref('total_hearts_k43');
+    window.__heartsRef = heartsRef;
+    heartsRef.on('value', snap => { const el = document.getElementById('hearts-count'); if (el) el.textContent = formatCompactNumber(snap.val() || 0); });
   } catch (e) {
     console.warn('Firebase error:', e);
     const w = document.getElementById('stats-widget');
     if (w) w.style.display = 'none';
   }
+}
+
+/* ══ THẢ TIM ══ */
+function sendHeart() {
+  if (window.__heartsRef) {
+    window.__heartsRef.transaction(cur => (cur || 0) + 1);
+  }
+  spawnFloatingHeart();
+}
+
+function spawnFloatingHeart() {
+  const wrap = document.querySelector('#heart-btn .heart-icon-wrap');
+  if (!wrap) return;
+  const fh = document.createElement('span');
+  fh.className = 'floating-heart';
+  fh.textContent = '❤';
+  fh.style.setProperty('--dx', (Math.random() * 24 - 12) + 'px');
+  wrap.appendChild(fh);
+  setTimeout(() => fh.remove(), 900);
+}
+
+// Định dạng số rút gọn kiểu "1.2k" cho lượt tim (giữ nguyên số nhỏ, ví dụ 1234 -> "1.2k")
+function formatCompactNumber(n) {
+  n = Number(n) || 0;
+  if (n < 1000) return n.toLocaleString('vi-VN');
+  const v = Math.floor(n / 100) / 10; // làm tròn 1 chữ số thập phân
+  return (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)) + 'k';
 }
 </script>
 </body>
