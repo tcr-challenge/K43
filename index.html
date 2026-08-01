@@ -172,11 +172,44 @@
   @media (max-width: 680px) { #lb-prev { left: 4px; } #lb-next { right: 4px; } .lb-img { max-height: 52vh; } .lb-video { height: 42vh; } .lb-thumbs { max-width: 94vw; } }
 
   /* ══ LOADING ══ */
-  .app-loading { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(10,10,15,0.88); backdrop-filter: blur(10px); flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .app-loading { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(10,10,15,0.92); backdrop-filter: blur(10px); flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
   .app-loading.show { display: flex; }
-  .app-loading-icon { font-size: 54px; animation: bounce 0.8s ease-in-out infinite alternate; }
-  @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-18px); } }
-  .app-loading-text { font-family: var(--font-body); font-size: 14px; color: var(--muted); }
+
+  .app-loading-stage { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; }
+  .app-loading-logo-wrap { position: relative; z-index: 2; width: 108px; height: 108px; display: flex; align-items: center; justify-content: center; }
+  .app-loading-logo { max-width: 100%; max-height: 100%; object-fit: contain; animation: loading-bounce 0.85s cubic-bezier(.36,.07,.19,.97) infinite; filter: drop-shadow(0 10px 22px rgba(0,0,0,0.55)); }
+  @keyframes loading-bounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    40% { transform: translateY(-20px) scale(1.05); }
+    55% { transform: translateY(-20px) scale(1.05); }
+    75% { transform: translateY(0) scale(0.97); }
+  }
+
+  /* Pháo giấy bắn lên quanh logo, lặp liên tục trong lúc chờ tải */
+  .confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 1; }
+  .confetti-piece { position: absolute; left: 50%; top: 58%; width: 7px; height: 14px; margin-left: -3.5px; border-radius: 2px; opacity: 0; animation: confetti-burst 1.7s ease-out infinite; }
+  @keyframes confetti-burst {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    8% { opacity: 1; }
+    45% { transform: translate(var(--tx), -98px) rotate(220deg); opacity: 1; }
+    100% { transform: translate(calc(var(--tx) * 1.35), 46px) rotate(500deg); opacity: 0; }
+  }
+  .confetti-piece:nth-child(1)  { --tx: -74px; background: var(--accent);  animation-delay: 0s;    }
+  .confetti-piece:nth-child(2)  { --tx: -54px; background: var(--accent2); animation-delay: .18s;  }
+  .confetti-piece:nth-child(3)  { --tx: -32px; background: var(--success); animation-delay: .34s;  }
+  .confetti-piece:nth-child(4)  { --tx: -12px; background: #fff;          animation-delay: .06s;  }
+  .confetti-piece:nth-child(5)  { --tx: 12px;  background: var(--accent); animation-delay: .27s;  }
+  .confetti-piece:nth-child(6)  { --tx: 32px;  background: var(--accent2); animation-delay: .42s; }
+  .confetti-piece:nth-child(7)  { --tx: 54px;  background: var(--success); animation-delay: .12s; }
+  .confetti-piece:nth-child(8)  { --tx: 74px;  background: #fff;          animation-delay: .38s;  }
+  .confetti-piece:nth-child(9)  { --tx: -62px; background: var(--accent2); animation-delay: .52s; width: 5px; height: 10px; }
+  .confetti-piece:nth-child(10) { --tx: -20px; background: var(--accent);  animation-delay: .22s; width: 5px; height: 10px; }
+  .confetti-piece:nth-child(11) { --tx: 20px;  background: var(--success); animation-delay: .48s; width: 5px; height: 10px; }
+  .confetti-piece:nth-child(12) { --tx: 62px;  background: #fff;          animation-delay: .60s; width: 5px; height: 10px; }
+
+  .app-loading-text { text-align: center; padding: 4px 24px 0; }
+  .app-loading-line1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(14px, 3.8vw, 16px); letter-spacing: 1.5px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; text-shadow: 0 2px 14px rgba(247,201,72,0.35); }
+  .app-loading-line2 { font-family: var(--font-body); font-size: clamp(11.5px, 3vw, 13px); font-weight: 600; color: var(--muted); line-height: 1.5; max-width: 320px; margin: 0 auto; letter-spacing: 0.3px; }
 
   .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 13px 18px; border-radius: 10px; font-family: var(--font-body); font-size: 14px; font-weight: 500; z-index: 3000; transform: translateY(100px); opacity: 0; transition: all 0.3s; max-width: 300px; }
   .toast.show { transform: none; opacity: 1; }
@@ -203,7 +236,7 @@
   @keyframes heart-float { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.6); } 100% { opacity: 0; transform: translate(calc(-50% + var(--dx, 0px)), -36px) scale(1.1); } }
 
   @media (max-width: 600px) {
-    :root { --thumb-w: 130px; --logo-w: 72px; }
+    :root { --thumb-w: 130px; --logo-w: 144px; }
     .hero { min-height: 320px; }
     .lb-tab-label { font-size: 13px; }
     .stats-widget { bottom: 14px; left: 12px; }
@@ -214,8 +247,20 @@
 <body>
 
 <div class="app-loading" id="app-loading">
-  <div class="app-loading-icon">📷</div>
-  <div class="app-loading-text">Đang tải ảnh, chờ chút nha...</div>
+  <div class="app-loading-stage">
+    <div class="confetti-wrap">
+      <span class="confetti-piece"></span><span class="confetti-piece"></span><span class="confetti-piece"></span><span class="confetti-piece"></span>
+      <span class="confetti-piece"></span><span class="confetti-piece"></span><span class="confetti-piece"></span><span class="confetti-piece"></span>
+      <span class="confetti-piece"></span><span class="confetti-piece"></span><span class="confetti-piece"></span><span class="confetti-piece"></span>
+    </div>
+    <div class="app-loading-logo-wrap">
+      <img src="images/logo.png" alt="Logo Hội Khóa K43" class="app-loading-logo">
+    </div>
+  </div>
+  <div class="app-loading-text">
+    <div class="app-loading-line1">Bạn ơi chờ chút nha</div>
+    <div class="app-loading-line2">Hội Khóa K43 - 21 Năm - Ký Ức Ngọt Ngào - Tương Lai Kết Nối</div>
+  </div>
 </div>
 
 <!-- ══ HERO ══ -->
