@@ -8,7 +8,7 @@
 <title>Kỷ Yếu Ảnh — Hội Khóa K43 THPT Xuân Đỉnh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c27; --border: #2a2a3d;
@@ -16,12 +16,13 @@
     --success: #4ade80; --radius: 12px; --thumb-w: 200px; --thumb-ratio: 3/2;
     /* 🔧 SỬA KÍCH THƯỚC LOGO TẠI ĐÂY (px). Logo sẽ tự co nhỏ lại trên điện thoại
        (xem @media max-width:600px bên dưới) nên không cần chỉnh gì thêm cho mobile. */
-    --logo-w: 200px;
+    --logo-w: 100px;
     /* 🔧 SỬA KÍCH THƯỚC CLIP RECAP TẠI ĐÂY.
        Đây là chiều rộng TỐI ĐA — trên điện thoại clip sẽ tự co nhỏ lại vừa màn hình. */
     --hero-video-w: 640px;
     --font-display: 'Montserrat', 'Segoe UI', sans-serif;
     --font-body: 'Open Sans', 'Segoe UI', Roboto, sans-serif;
+    --font-script: 'Dancing Script', cursive; /* font nhẹ nhàng, bay bổng — dùng cho dòng tagline */
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; padding-bottom: 70px; }
@@ -29,7 +30,12 @@
 
   /* ══ HERO ══ */
   .hero { position: relative; padding: 0; overflow: hidden; min-height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .hero-bg { position: absolute; inset: 0; background: linear-gradient(160deg, #241226 0%, #14172e 45%, #0a0a0f 100%); z-index: 0; }
+  /* 🔧 ẢNH NỀN HEADER: đường dẫn đang để là "images/bannerk43.jpg" — nếu ảnh anh up
+     tên/đuôi khác (vd .png, .webp, hay nằm ở thư mục khác) thì sửa lại url() bên dưới cho đúng. */
+  .hero-bg { position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(160deg, rgba(36,18,38,0.82) 0%, rgba(20,23,46,0.85) 45%, rgba(10,10,15,0.92) 100%),
+      url('images/bannerk43.jpg') center/cover no-repeat; }
   .hero-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% -10%, rgba(247,201,72,0.14), transparent 60%); }
   .hero-content { position: relative; z-index: 2; width: 100%; text-align: center; padding: 48px 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 0; }
   .hero-logo { width: var(--logo-w); height: var(--logo-w); object-fit: contain; margin-bottom: 18px; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.45)); }
@@ -54,7 +60,7 @@
   }
   .hero h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(24px, 5vw, 40px); letter-spacing: 1px; line-height: 1.3; margin: 0 0 10px; text-transform: uppercase; color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,0.5); }
   .hero h1 em { font-style: normal; color: var(--accent); }
-  .hero-tagline { font-family: var(--font-display); font-weight: 700; font-size: clamp(13px, 2.2vw, 17px); letter-spacing: 1px; color: rgba(247,201,72,0.9); margin-bottom: 30px; }
+  .hero-tagline { font-family: var(--font-script); font-weight: 700; font-size: clamp(20px, 5.2vw, 34px); letter-spacing: 0.3px; color: var(--accent); margin-bottom: 30px; line-height: 1.25; text-shadow: 0 2px 18px rgba(247,201,72,0.35); }
 
   /* ══ RECAP VIDEO — section riêng biệt, tách khỏi hero/hàng tab, trang trí nổi bật ══ */
   .recap-section { position: relative; overflow: hidden; padding: 60px 20px 68px; }
