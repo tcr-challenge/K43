@@ -16,7 +16,7 @@
     --success: #4ade80; --radius: 12px; --thumb-w: 200px; --thumb-ratio: 3/2;
     /* 🔧 SỬA KÍCH THƯỚC LOGO TẠI ĐÂY (px). Logo sẽ tự co nhỏ lại trên điện thoại
        (xem @media max-width:600px bên dưới) nên không cần chỉnh gì thêm cho mobile. */
-    --logo-w: 200px;
+    --logo-w: 100px;
     /* 🔧 SỬA KÍCH THƯỚC CLIP RECAP TẠI ĐÂY.
        Đây là chiều rộng TỐI ĐA — trên điện thoại clip sẽ tự co nhỏ lại vừa màn hình. */
     --hero-video-w: 640px;
@@ -129,6 +129,7 @@
   .photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .photo-card .video-badge { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); }
   .photo-card .video-badge svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6)); }
+  .photo-card .clip-title-badge { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 14px 8px 6px; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.82) 65%); color: #fff; font-family: var(--font-body); font-size: 12px; font-weight: 600; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 3px rgba(0,0,0,0.6); pointer-events: none; }
   .skeleton { background: linear-gradient(90deg, var(--surface2) 25%, var(--surface) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
   @keyframes shimmer { to { background-position: -200% 0; } }
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-family: var(--font-body); font-size: 14px; }
@@ -159,6 +160,8 @@
   .lb-counter { font-family: var(--font-body); font-size: 13px; font-weight: 400; color: var(--muted); }
   .lb-folder-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); text-decoration: none; font-family: var(--font-body); font-size: 13px; font-weight: 500; transition: all 0.2s; }
   .lb-folder-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .lb-clip-title { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--text); max-width: 90vw; }
+  .lb-clip-desc { font-family: var(--font-body); font-size: 13px; color: var(--muted); max-width: 640px; }
   .lb-thumbs { display: flex; align-items: center; gap: 6px; overflow-x: auto; padding: 6px 2px; max-width: 88vw; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--border) transparent; margin-top: 10px; cursor: default; }
   .lb-thumbs::-webkit-scrollbar { height: 3px; }
   .lb-thumb { flex-shrink: 0; width: 62px; height: 44px; border-radius: 6px; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: width 0.2s ease, height 0.2s ease, border-color 0.16s, opacity 0.16s; background: var(--surface2); position: relative; opacity: 0.65; }
@@ -288,6 +291,8 @@
   </div>
   <div class="lb-info" onclick="event.stopPropagation()">
     <div class="lb-tab-label" id="lb-tab-label"></div>
+    <div class="lb-clip-title" id="lb-clip-title" style="display:none;"></div>
+    <div class="lb-clip-desc" id="lb-clip-desc" style="display:none;"></div>
     <div class="lb-counter" id="lb-counter"></div>
     <a class="lb-folder-btn" id="lb-folder-btn" href="#" target="_blank">📁 Mở thư mục Google Drive</a>
   </div>
@@ -322,15 +327,31 @@ const CONFIG = {
   // 📌 Clip Youtube giới thiệu, hiện ngay dưới hàng tab. Dán link Youtube bất kỳ
   // (dạng watch?v=..., youtu.be/..., hoặc /shorts/...) vào đây. Để trống '' nếu chưa có.
   heroVideoUrl: 'https://www.youtube.com/watch?v=GtXpXf6CmHg',
+
+  // 📌 TAB "CLIP" TỰ ĐỘNG TỪ GOOGLE SHEET
+  // Chỉ cần ID của Google Sheet (đoạn nằm giữa "/d/" và "/edit" trong đường link).
+  // Cấu trúc sheet (đúng thứ tự cột, dòng đầu tiên là tiêu đề cột):
+  //   STT | Tên clip | Link Clip | Mô tả
+  // ⚠️ QUAN TRỌNG: Sheet phải ở chế độ chia sẻ "Anyone with the link" (Bất kỳ ai có
+  // đường liên kết) - quyền "Viewer" (Người xem) là đủ, không cần "Publish to web".
+  // Mỗi khi anh thêm 1 dòng mới (dán link Youtube/Drive/nguồn khác) và lưu lại, trang
+  // web sẽ tự lấy về và hiện thêm video trong tab Clip ở lần tải trang kế tiếp — không
+  // cần sửa gì trong file HTML này nữa.
+  clipsSheetId: '1MMD8d7eJLa7CtT0X77RembNWPKGcMJduUCMSLcihocc',
+  // Nếu clip nằm ở 1 sheet (tab) cụ thể khác "Trang tính1" thì điền đúng tên vào đây,
+  // để trống '' thì mặc định lấy sheet đầu tiên.
+  clipsSheetName: '',
 };
 
 // Icon mặc định cho các tab hay gặp, tab lạ sẽ dùng icon mặc định 🗂️
 const TAB_ICONS = { 'anh': '📷', 'clip': '🎬', 'hau-truong': '🎭' };
 
-// ══ TAB "CLIP" (thêm thủ công, chưa cần qua Google Sheet/Drive) ══════════════
-// Cách dùng: copy 1 dòng mẫu bên dưới (bỏ dấu // ở đầu), đổi "title", rồi dán
-// link Youtube hoặc link chia sẻ Google Drive vào "url". Có thể thêm nhiều dòng.
-// Để mảng rỗng [] cũng không sao — tab CLIP vẫn hiện, chỉ tạm thời trống.
+// ══ TAB "CLIP" — DANH SÁCH THỦ CÔNG DỰ PHÒNG ══════════════════════════════
+// Từ giờ nguồn chính của tab Clip là Google Sheet (xem CONFIG.clipsSheetId ở trên) —
+// chỉ cần thêm dòng mới trong Sheet là clip tự hiện, KHÔNG cần sửa gì ở đây nữa.
+// Mảng bên dưới chỉ dùng khi anh muốn thêm gấp 1 clip mà chưa kịp cập nhật Sheet,
+// hoặc dùng làm dự phòng nếu Sheet lỗi. Cách dùng: copy 1 dòng mẫu (bỏ dấu // ở đầu),
+// đổi "title", dán link Youtube/Google Drive vào "url". Để mảng rỗng [] cũng được.
 const MANUAL_CLIPS = [
   // { title: 'Video kỷ niệm 20 năm ra trường', url: 'https://www.youtube.com/watch?v=XXXXXXXXXXX' },
   // { title: 'Clip hậu trường buổi họp lớp',   url: 'https://drive.google.com/file/d/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/view' },
@@ -388,13 +409,110 @@ function buildManualClipEntries() {
   }).filter(Boolean);
 }
 
+/* ══ TAB "CLIP" TỰ ĐỘNG TỪ GOOGLE SHEET ══
+   Google KHÔNG cho phép gọi endpoint gviz bằng fetch()/XHR trực tiếp từ tên miền khác
+   (không có header CORS) -> gọi bằng fetch sẽ luôn báo lỗi "Failed to fetch".
+   Cách đúng: tải qua JSONP (thẻ <script>), vốn không bị giới hạn CORS — đây là cơ chế
+   Google Visualization API hỗ trợ sẵn qua tham số "responseHandler".
+   Chỉ cần Sheet ở chế độ chia sẻ "Anyone with the link: Viewer", không cần "Publish to web".
+   Cấu trúc cột cố định theo đúng thứ tự (dòng 1 là tiêu đề, tự bỏ qua):
+   STT | Tên clip | Link Clip | Mô tả */
+async function fetchClipsFromSheet() {
+  if (!CONFIG.clipsSheetId) return [];
+  const data = await loadSheetJsonp();
+  const rows = (data && data.table && data.table.rows) || [];
+
+  const clips = [];
+  rows.forEach((row, i) => {
+    const cells = row.c || [];
+    const getVal = (idx) => {
+      const cell = cells[idx];
+      if (!cell) return '';
+      // Ưu tiên "f" (giá trị định dạng hiển thị, vd số STT không có .0) nếu có
+      const v = (cell.f !== undefined && cell.f !== null) ? cell.f : (cell.v ?? '');
+      return v.toString().trim();
+    };
+    const stt = getVal(0) || (i + 1);
+    const title = getVal(1);
+    const link = getVal(2);
+    const desc = getVal(3);
+    if (!link) return; // bỏ qua dòng chưa có link
+
+    const parsed = parseClipUrl(link);
+    if (!parsed) return;
+
+    clips.push({
+      id: 'sheetclip_' + stt + '_' + i,
+      tab: 'clip', tabLabel: 'Clip', type: 'video',
+      thumb: parsed.thumb, full: parsed.embed,
+      folderUrl: link, name: title, desc: desc, createdTime: ''
+    });
+  });
+  return clips;
+}
+
+/* Tải dữ liệu Google Sheet bằng JSONP: chèn thẻ <script> trỏ tới endpoint gviz với
+   tham số responseHandler, Google sẽ tự gọi hàm callback với dữ liệu — không bị CORS
+   chặn vì đây là cách tải script bình thường, không phải fetch/XHR. */
+function loadSheetJsonp() {
+  return new Promise((resolve, reject) => {
+    const cbName = '__gsheetClipsCb_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+    let settled = false;
+
+    const cleanup = () => {
+      delete window[cbName];
+      script.remove();
+      clearTimeout(timer);
+    };
+
+    window[cbName] = (data) => {
+      if (settled) return;
+      settled = true;
+      resolve(data);
+      cleanup();
+    };
+
+    let url = `https://docs.google.com/spreadsheets/d/${CONFIG.clipsSheetId}/gviz/tq?tqx=out:json;responseHandler:${cbName}&headers=1`;
+    if (CONFIG.clipsSheetName) url += `&sheet=${encodeURIComponent(CONFIG.clipsSheetName)}`;
+    url += `&_=${Date.now()}`;
+
+    const script = document.createElement('script');
+    script.src = url;
+    script.onerror = () => {
+      if (settled) return;
+      settled = true;
+      reject(new Error('Không tải được dữ liệu từ Google Sheet. Kiểm tra: Sheet đã bật chia sẻ "Anyone with the link" (quyền Viewer) chưa?'));
+      cleanup();
+    };
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      reject(new Error('Hết thời gian chờ tải Google Sheet (timeout 10s) — kiểm tra lại kết nối mạng.'));
+      cleanup();
+    }, 10000);
+
+    document.head.appendChild(script);
+  });
+}
+
 async function fetchAll() {
   document.getElementById('app-loading').classList.add('show');
   try {
     const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     PHOTOS = await res.json();
-    PHOTOS = PHOTOS.concat(buildManualClipEntries());
+
+    // Lấy clip từ Google Sheet — nếu lỗi (sai quyền chia sẻ, mất mạng...) thì không làm
+    // sập cả trang, chỉ tạm thời bỏ qua và dùng danh sách clip thủ công (nếu có).
+    let sheetClips = [];
+    try {
+      sheetClips = await fetchClipsFromSheet();
+    } catch (err) {
+      console.warn('Không tải được clip từ Google Sheet:', err);
+      showToast('Lỗi tải Clip từ Sheet: ' + (err && err.message ? err.message : err), true);
+    }
+
+    PHOTOS = PHOTOS.concat(sheetClips, buildManualClipEntries());
     buildTabs();
     renderTabs();
     setTab('all');
@@ -485,12 +603,16 @@ function renderGrid() {
     const videoBadge = p.type === 'video'
       ? '<div class="video-badge"><svg width="40" height="40" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.45)"/><path d="M10 8l6 4-6 4V8z" fill="white"/></svg></div>'
       : '';
+    const clipTitleBadge = (p.type === 'video' && p.name)
+      ? `<div class="clip-title-badge">${escapeHtml(p.name)}</div>`
+      : '';
     const img = p.thumb
       ? `<img loading="lazy" src="${p.thumb}" alt="${escapeHtml(p.name || '')}">`
       : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--surface2);">🎬</div>`;
     return `<div class="photo-card" onclick="openLightbox(${globalIdx})">
       ${img}
       ${videoBadge}
+      ${clipTitleBadge}
     </div>`;
   }).join('');
 
@@ -552,6 +674,22 @@ function renderLbMedia(instant) {
   }
 
   document.getElementById('lb-tab-label').textContent = p.tabLabel || '';
+
+  const titleEl = document.getElementById('lb-clip-title');
+  if (p.type === 'video' && p.name) {
+    titleEl.textContent = p.name;
+    titleEl.style.display = 'block';
+  } else {
+    titleEl.style.display = 'none';
+  }
+  const descEl = document.getElementById('lb-clip-desc');
+  if (p.type === 'video' && p.desc) {
+    descEl.textContent = p.desc;
+    descEl.style.display = 'block';
+  } else {
+    descEl.style.display = 'none';
+  }
+
   document.getElementById('lb-counter').textContent = (lbIndex + 1) + ' / ' + currentList.length;
   const folderBtn = document.getElementById('lb-folder-btn');
   folderBtn.href = p.folderUrl || '#';
