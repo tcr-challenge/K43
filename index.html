@@ -34,6 +34,24 @@
   .hero-content { position: relative; z-index: 2; width: 100%; text-align: center; padding: 48px 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 0; }
   .hero-logo { width: var(--logo-w); height: var(--logo-w); object-fit: contain; margin-bottom: 18px; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.45)); }
   .hero-logo.placeholder { display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--muted); background: var(--surface2); border-radius: 50%; border: 2px solid rgba(247,201,72,0.4); }
+
+  /* ══ HIỆU ỨNG ÁNH SÁNG GƯƠNG CHẠY QUA LOGO (thỉnh thoảng lặp lại) ══ */
+  .hero-logo-wrap { position: relative; width: var(--logo-w); height: var(--logo-w); margin: 0 auto 18px; }
+  .hero-logo-wrap .hero-logo { margin-bottom: 0; }
+  .hero-logo-shine { position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; }
+  .hero-logo-shine::before {
+    content: ''; position: absolute; top: -60%; left: -60%; width: 35%; height: 220%;
+    background: linear-gradient(115deg, transparent 0%, transparent 35%, rgba(255,255,255,0.85) 50%, transparent 65%, transparent 100%);
+    transform: rotate(20deg);
+    animation: logo-shine-sweep 6s ease-in-out infinite;
+  }
+  /* 🔧 ĐỔI TẦN SUẤT ÁNH SÁNG CHẠY QUA: sửa "6s" ở trên (chu kỳ lặp) — số nhỏ hơn thì chạy dày hơn.
+     Sửa mốc "18%" bên dưới để ánh sáng quét nhanh/chậm hơn trong mỗi chu kỳ. */
+  @keyframes logo-shine-sweep {
+    0%, 100% { left: -60%; }
+    18% { left: 130%; }
+  }
   .hero h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(24px, 5vw, 40px); letter-spacing: 1px; line-height: 1.3; margin: 0 0 10px; text-transform: uppercase; color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,0.5); }
   .hero h1 em { font-style: normal; color: var(--accent); }
   .hero-tagline { font-family: var(--font-display); font-weight: 700; font-size: clamp(13px, 2.2vw, 17px); letter-spacing: 1px; color: rgba(247,201,72,0.9); margin-bottom: 30px; }
@@ -183,8 +201,21 @@
   <div class="hero-bg"></div>
   <div class="hero-content">
     <!-- Đổi src bên dưới thành logo thật của trường/khóa khi có -->
-    <img class="hero-logo" src="images/logo.png" alt="Logo"
-         onerror="this.classList.add('placeholder'); this.removeAttribute('src'); this.textContent='🎓';">
+    <div class="hero-logo-wrap" id="hero-logo-wrap">
+      <img class="hero-logo" id="hero-logo-img" src="images/logo.png" alt="Logo"
+           onerror="this.classList.add('placeholder'); this.removeAttribute('src'); this.textContent='🎓'; document.getElementById('hero-logo-shine').style.display='none';">
+      <div class="hero-logo-shine" id="hero-logo-shine"></div>
+    </div>
+    <script>
+      // Ánh sáng gương chạy qua chỉ hiện đúng trong hình dạng logo (không tràn ra ngoài phần trong suốt của ảnh),
+      // bằng cách lấy chính ảnh logo làm "khuôn" (mask) cho lớp ánh sáng — tự đồng bộ, đổi ảnh logo ở trên là xong.
+      (function () {
+        var src = document.getElementById('hero-logo-img').getAttribute('src');
+        var shine = document.getElementById('hero-logo-shine');
+        shine.style.webkitMaskImage = "url('" + src + "')";
+        shine.style.maskImage = "url('" + src + "')";
+      })();
+    </script>
     <h1>HỘI KHÓA K43<br><em>TRƯỜNG THPT XUÂN ĐỈNH</em></h1>
     <div class="hero-tagline">Thanh xuân rực rỡ - Vang khúc tri ân</div>
 
@@ -247,6 +278,9 @@
 <footer style="border-top:1px solid var(--border);margin-top:40px;padding:36px 24px 28px;text-align:center;background:var(--surface);">
   <div style="font-family:var(--font-display);font-weight:800;font-size:clamp(14px,3vw,18px);letter-spacing:1.5px;color:var(--accent);margin-bottom:6px;">HỘI KHÓA K43 - TRƯỜNG THPT XUÂN ĐỈNH</div>
   <div style="font-family:var(--font-display);font-weight:600;font-size:clamp(11px,2vw,13px);letter-spacing:1px;color:var(--muted);">Thanh xuân rực rỡ - Vang khúc tri ân</div>
+  <div style="font-family:var(--font-body);font-size:clamp(11px,2vw,12.5px);color:var(--muted);margin-top:16px;">
+    © 2026 Copyright by <a href="https://web.facebook.com/thuongcatbactuliemhanoi/" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600;">LangBenSong</a>. All rights reserved.
+  </div>
 </footer>
 
 <!-- STATS WIDGET (đổi sang project Firebase riêng nếu muốn số liệu độc lập) -->
