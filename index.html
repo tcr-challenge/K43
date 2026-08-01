@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Dự phòng cho lỗi "153 - Lỗi cấu hình trình phát video" khi nhúng Youtube trên một số trình duyệt/thiết bị -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Kỷ Yếu Ảnh — Hội Khóa K43 THPT Xuân Đỉnh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,6 +37,7 @@
 
   /* ══ HERO VIDEO (clip Youtube giới thiệu, nằm dưới hàng tab) ══ */
   .hero-video-wrap { width: 100%; max-width: var(--hero-video-w); margin: 26px auto 4px; padding: 0 16px; }
+  .hero-video-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(13px, 2.4vw, 16px); letter-spacing: 1.5px; color: var(--accent); text-align: center; margin-bottom: 12px; text-transform: uppercase; }
   .hero-video-frame { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; background: var(--surface2); border: 1px solid var(--border); box-shadow: 0 10px 36px rgba(0,0,0,0.4); }
   .hero-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
@@ -149,8 +152,9 @@
     <!-- Clip Youtube giới thiệu, hiện ngay dưới hàng tab. Đặt link ở CONFIG.heroVideoUrl trong <script> bên dưới.
          Để trống CONFIG.heroVideoUrl nếu chưa có clip -> khối này tự ẩn. -->
     <div class="hero-video-wrap" id="hero-video-wrap" style="display:none;">
+      <div class="hero-video-title">RECAP - THANH XUÂN RỰC RỠ</div>
       <div class="hero-video-frame">
-        <iframe id="hero-video-iframe" src="" title="Clip giới thiệu" loading="lazy"
+        <iframe id="hero-video-iframe" src="" title="Clip giới thiệu" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
@@ -425,7 +429,7 @@ function renderLbMedia(instant) {
   const wrap = document.getElementById('lb-media-wrap');
 
   if (p.type === 'video') {
-    wrap.innerHTML = `<div class="lb-spinner" id="lb-spinner">Đang tải...</div><iframe class="lb-video" src="${p.full}" allow="autoplay" allowfullscreen onload="document.getElementById('lb-spinner')?.remove()"></iframe>`;
+    wrap.innerHTML = `<div class="lb-spinner" id="lb-spinner">Đang tải...</div><iframe class="lb-video" src="${p.full}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay" allowfullscreen onload="document.getElementById('lb-spinner')?.remove()"></iframe>`;
   } else {
     const medSrc = getMediumImgSrc(p);
     // Hiện ảnh thumbnail mờ (đã có sẵn, tải nhanh) làm nền lót trong lúc chờ ảnh chất lượng cao hơn tải xong
