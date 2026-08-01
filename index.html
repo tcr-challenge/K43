@@ -12,6 +12,9 @@
     --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c27; --border: #2a2a3d;
     --accent: #f7c948; --accent2: #ff6b35; --text: #f0f0f5; --muted: #7070a0;
     --success: #4ade80; --radius: 12px; --thumb-w: 200px; --thumb-ratio: 3/2;
+    /* 🔧 SỬA KÍCH THƯỚC CLIP YOUTUBE GIỚI THIỆU (dưới hàng tab) TẠI ĐÂY.
+       Đây là chiều rộng TỐI ĐA — trên điện thoại clip sẽ tự co nhỏ lại vừa màn hình. */
+    --hero-video-w: 460px;
     --font-display: 'Montserrat', 'Segoe UI', sans-serif;
     --font-body: 'Open Sans', 'Segoe UI', Roboto, sans-serif;
   }
@@ -29,6 +32,11 @@
   .hero h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(24px, 5vw, 40px); letter-spacing: 1px; line-height: 1.3; margin: 0 0 10px; text-transform: uppercase; color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,0.5); }
   .hero h1 em { font-style: normal; color: var(--accent); }
   .hero-tagline { font-family: var(--font-display); font-weight: 700; font-size: clamp(13px, 2.2vw, 17px); letter-spacing: 1px; color: rgba(247,201,72,0.9); margin-bottom: 30px; }
+
+  /* ══ HERO VIDEO (clip Youtube giới thiệu, nằm dưới hàng tab) ══ */
+  .hero-video-wrap { width: 100%; max-width: var(--hero-video-w); margin: 26px auto 4px; padding: 0 16px; }
+  .hero-video-frame { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; background: var(--surface2); border: 1px solid var(--border); box-shadow: 0 10px 36px rgba(0,0,0,0.4); }
+  .hero-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
   /* ══ TABS ══ */
   .tabs-outer { max-width: 720px; width: 100%; margin: 0 auto; padding: 0 16px; }
@@ -49,7 +57,6 @@
   .photo-card { position: relative; aspect-ratio: var(--thumb-ratio); border-radius: 10px; overflow: hidden; cursor: pointer; background: var(--surface2); border: 1px solid var(--border); transition: all 0.18s; }
   .photo-card:hover { transform: scale(1.03); border-color: var(--accent); box-shadow: 0 0 18px rgba(247,201,72,0.18); z-index: 2; }
   .photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .photo-card .tab-tag { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); color: var(--accent); font-family: var(--font-display); font-weight: 700; font-size: 10px; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 4px; }
   .photo-card .video-badge { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); }
   .photo-card .video-badge svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6)); }
   .skeleton { background: linear-gradient(90deg, var(--surface2) 25%, var(--surface) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
@@ -68,8 +75,10 @@
   .lb-close { position: absolute; top: 18px; right: 18px; background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10; }
   .lb-close:hover { background: var(--accent); color: #0a0a0f; border-color: var(--accent); }
   .lb-main { position: relative; display: flex; align-items: center; justify-content: center; max-width: 92vw; max-height: 74vh; flex: 1; cursor: default; }
-  .lb-img { max-width: 88vw; max-height: 72vh; border-radius: 10px; object-fit: contain; display: block; box-shadow: 0 20px 60px rgba(0,0,0,0.6); transition: opacity 0.2s; cursor: default; }
+  .lb-img { max-width: 88vw; max-height: 72vh; border-radius: 10px; object-fit: contain; display: block; box-shadow: 0 20px 60px rgba(0,0,0,0.6); transition: opacity 0.25s; cursor: default; position: relative; z-index: 2; }
   .lb-img.hidden { opacity: 0; }
+  .lb-img-placeholder { position: absolute; inset: 0; margin: auto; max-width: 88vw; max-height: 72vh; width: 100%; height: 100%; object-fit: contain; filter: blur(14px) brightness(0.8); transform: scale(1.05); border-radius: 10px; z-index: 1; }
+  .lb-error-text { position: absolute; inset: 0; z-index: 3; display: none; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; background: rgba(10,10,15,0.5); border-radius: 10px; }
   .lb-video { width: min(88vw, 900px); height: min(72vh, 506px); border-radius: 10px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.6); background: #000; }
   .lb-spinner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; }
   .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(10,10,15,0.75); border: 1px solid var(--border); color: var(--text); width: 50px; height: 50px; border-radius: 50%; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px); z-index: 5; }
@@ -80,12 +89,12 @@
   .lb-counter { font-family: var(--font-body); font-size: 13px; font-weight: 400; color: var(--muted); }
   .lb-folder-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); text-decoration: none; font-family: var(--font-body); font-size: 13px; font-weight: 500; transition: all 0.2s; }
   .lb-folder-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .lb-thumbs { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 2px; max-width: 88vw; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--border) transparent; margin-top: 10px; cursor: default; }
+  .lb-thumbs { display: flex; align-items: center; gap: 6px; overflow-x: auto; padding: 6px 2px; max-width: 88vw; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--border) transparent; margin-top: 10px; cursor: default; }
   .lb-thumbs::-webkit-scrollbar { height: 3px; }
-  .lb-thumb { flex-shrink: 0; width: 76px; height: 52px; border-radius: 6px; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: all 0.16s; background: var(--surface2); position: relative; }
+  .lb-thumb { flex-shrink: 0; width: 62px; height: 44px; border-radius: 6px; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: width 0.2s ease, height 0.2s ease, border-color 0.16s, opacity 0.16s; background: var(--surface2); position: relative; opacity: 0.65; }
   .lb-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .lb-thumb:hover { border-color: var(--muted); }
-  .lb-thumb.active { border-color: var(--accent); }
+  .lb-thumb:hover { opacity: 1; border-color: var(--muted); }
+  .lb-thumb.active { border-color: var(--accent); opacity: 1; width: 96px; height: 68px; }
   .lb-thumb .lb-thumb-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.25); font-size: 16px; }
   @media (max-width: 680px) { #lb-prev { left: 4px; } #lb-next { right: 4px; } .lb-img { max-height: 52vh; } .lb-video { height: 42vh; } .lb-thumbs { max-width: 94vw; } }
 
@@ -136,6 +145,15 @@
     <div class="tabs-outer">
       <div class="tabs-wrap" id="tabs-wrap"></div>
     </div>
+
+    <!-- Clip Youtube giới thiệu, hiện ngay dưới hàng tab. Đặt link ở CONFIG.heroVideoUrl trong <script> bên dưới.
+         Để trống CONFIG.heroVideoUrl nếu chưa có clip -> khối này tự ẩn. -->
+    <div class="hero-video-wrap" id="hero-video-wrap" style="display:none;">
+      <div class="hero-video-frame">
+        <iframe id="hero-video-iframe" src="" title="Clip giới thiệu" loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -143,7 +161,7 @@
 <div class="section" id="gallery-section">
   <div class="section-title" id="gallery-title">TẤT CẢ <span class="count-badge" id="total-count">--</span></div>
   <div class="photo-grid" id="gallery-grid"></div>
-  <div class="empty-state" id="empty-state" style="display:none;">Chưa có ảnh nào trong mục này.</div>
+  <div class="empty-state" id="empty-state" style="display:none;">Chưa có nội dung nào trong mục này.</div>
   <div class="pagination" id="pagination"></div>
 </div>
 
@@ -153,8 +171,9 @@
   <div class="lb-main" onclick="event.stopPropagation()">
     <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">‹</button>
     <div style="position:relative;" id="lb-media-wrap">
-      <div class="lb-spinner" id="lb-spinner">Đang tải...</div>
+      <img class="lb-img-placeholder" src="" alt="">
       <img class="lb-img hidden" id="lb-img" src="" alt="" onload="onLbImgLoad()" onerror="onLbImgError()">
+      <div class="lb-error-text" id="lb-error-text">Không tải được ảnh</div>
     </div>
     <button class="lb-nav" id="lb-next" onclick="lbNav(1)">›</button>
   </div>
@@ -182,10 +201,23 @@
 <script>
 const CONFIG = {
   jsonUrl: 'https://raw.githubusercontent.com/tcr-challenge/K43/main/photos.json',
+
+  // 📌 Clip Youtube giới thiệu, hiện ngay dưới hàng tab. Dán link Youtube bất kỳ
+  // (dạng watch?v=..., youtu.be/..., hoặc /shorts/...) vào đây. Để trống '' nếu chưa có.
+  heroVideoUrl: 'https://www.youtube.com/watch?v=GtXpXf6CmHg',
 };
 
 // Icon mặc định cho các tab hay gặp, tab lạ sẽ dùng icon mặc định 🗂️
 const TAB_ICONS = { 'anh': '📷', 'clip': '🎬', 'hau-truong': '🎭' };
+
+// ══ TAB "CLIP" (thêm thủ công, chưa cần qua Google Sheet/Drive) ══════════════
+// Cách dùng: copy 1 dòng mẫu bên dưới (bỏ dấu // ở đầu), đổi "title", rồi dán
+// link Youtube hoặc link chia sẻ Google Drive vào "url". Có thể thêm nhiều dòng.
+// Để mảng rỗng [] cũng không sao — tab CLIP vẫn hiện, chỉ tạm thời trống.
+const MANUAL_CLIPS = [
+  // { title: 'Video kỷ niệm 20 năm ra trường', url: 'https://www.youtube.com/watch?v=XXXXXXXXXXX' },
+  // { title: 'Clip hậu trường buổi họp lớp',   url: 'https://drive.google.com/file/d/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/view' },
+];
 
 const IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 600;
 const PAGE_SIZE = IS_MOBILE ? 24 : 48;
@@ -197,7 +229,47 @@ let currentPage = 1;
 let currentList = [];      // danh sách ảnh đang hiển thị (theo tab hiện tại)
 let lbIndex = 0;
 
-document.addEventListener('DOMContentLoaded', fetchAll);
+document.addEventListener('DOMContentLoaded', () => { fetchAll(); initHeroVideo(); });
+
+/* ══ CLIP YOUTUBE GIỚI THIỆU (dưới hàng tab) ══ */
+function initHeroVideo() {
+  const parsed = parseClipUrl(CONFIG.heroVideoUrl);
+  if (!parsed || !parsed.embed) return; // chưa có link -> giữ ẩn
+  document.getElementById('hero-video-iframe').src = parsed.embed;
+  document.getElementById('hero-video-wrap').style.display = 'block';
+}
+
+/* Nhận link Youtube hoặc Google Drive (dạng người dùng hay copy/paste bình thường),
+   trả về link nhúng (embed) + ảnh thumbnail tương ứng — dùng chung cho hero video và tab CLIP. */
+function parseClipUrl(url) {
+  url = (url || '').trim();
+  if (!url) return null;
+  let m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{6,})/);
+  if (m) {
+    const vid = m[1];
+    return { embed: `https://www.youtube.com/embed/${vid}`, thumb: `https://img.youtube.com/vi/${vid}/hqdefault.jpg` };
+  }
+  if (url.includes('drive.google.com')) {
+    m = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (m) {
+      const fid = m[1];
+      return { embed: `https://drive.google.com/file/d/${fid}/preview`, thumb: `https://drive.google.com/thumbnail?id=${fid}&sz=w400` };
+    }
+  }
+  return { embed: url, thumb: '' }; // link khác (mp4 trực tiếp...) — nhúng thẳng, không có thumbnail tự động
+}
+
+function buildManualClipEntries() {
+  return MANUAL_CLIPS.map((c, i) => {
+    const parsed = parseClipUrl(c.url);
+    if (!parsed) return null;
+    return {
+      id: 'manualclip_' + i, tab: 'clip', tabLabel: 'Clip', type: 'video',
+      thumb: c.thumb || parsed.thumb, full: parsed.embed,
+      folderUrl: c.url, name: c.title || '', createdTime: ''
+    };
+  }).filter(Boolean);
+}
 
 async function fetchAll() {
   document.getElementById('app-loading').classList.add('show');
@@ -205,6 +277,7 @@ async function fetchAll() {
     const res = await fetch(CONFIG.jsonUrl + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     PHOTOS = await res.json();
+    PHOTOS = PHOTOS.concat(buildManualClipEntries());
     buildTabs();
     renderTabs();
     setTab('all');
@@ -229,6 +302,7 @@ function loadDemoData() {
       folderUrl: '#', name: 'demo_' + i, createdTime: ''
     };
   });
+  PHOTOS = PHOTOS.concat(buildManualClipEntries());
   buildTabs(); renderTabs(); setTab('all');
 }
 
@@ -240,6 +314,8 @@ function buildTabs() {
     if (!map.has(slug)) map.set(slug, { slug, label, count: 0 });
     map.get(slug).count++;
   }
+  // Luôn hiện tab CLIP dù chưa có clip nào, để dễ thấy tab đã sẵn sàng dùng
+  if (!map.has('clip')) map.set('clip', { slug: 'clip', label: 'Clip', count: 0 });
   TABS = Array.from(map.values()).sort((a, b) => a.label.localeCompare(b.label, 'vi'));
 }
 
@@ -298,7 +374,6 @@ function renderGrid() {
     return `<div class="photo-card" onclick="openLightbox(${globalIdx})">
       ${img}
       ${videoBadge}
-      <span class="tab-tag">${escapeHtml(p.tabLabel || p.name || '')}</span>
     </div>`;
   }).join('');
 
@@ -341,19 +416,22 @@ function openLightbox(globalIdx) {
   lbIndex = globalIdx;
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
-  renderLbMedia();
+  renderLbMedia(true);
 }
 
-function renderLbMedia() {
+function renderLbMedia(instant) {
   const p = currentList[lbIndex];
   if (!p) return;
   const wrap = document.getElementById('lb-media-wrap');
-  const spinner = document.getElementById('lb-spinner');
 
   if (p.type === 'video') {
     wrap.innerHTML = `<div class="lb-spinner" id="lb-spinner">Đang tải...</div><iframe class="lb-video" src="${p.full}" allow="autoplay" allowfullscreen onload="document.getElementById('lb-spinner')?.remove()"></iframe>`;
   } else {
-    wrap.innerHTML = `<div class="lb-spinner" id="lb-spinner">Đang tải ảnh...</div><img class="lb-img hidden" id="lb-img" src="${p.full}" alt="" onload="onLbImgLoad()" onerror="onLbImgError()">`;
+    const medSrc = getMediumImgSrc(p);
+    // Hiện ảnh thumbnail mờ (đã có sẵn, tải nhanh) làm nền lót trong lúc chờ ảnh chất lượng cao hơn tải xong
+    wrap.innerHTML = `<img class="lb-img-placeholder" src="${p.thumb || ''}" alt="">
+      <img class="lb-img hidden" id="lb-img" src="${medSrc}" alt="" onload="onLbImgLoad()" onerror="onLbImgError()">
+      <div class="lb-error-text" id="lb-error-text">Không tải được ảnh</div>`;
   }
 
   document.getElementById('lb-tab-label').textContent = p.tabLabel || '';
@@ -362,13 +440,13 @@ function renderLbMedia() {
   folderBtn.href = p.folderUrl || '#';
   folderBtn.textContent = p.type === 'video' ? '🔗 Mở link gốc' : '📁 Mở thư mục Google Drive';
 
-  renderLbThumbs();
+  renderLbThumbs(instant);
 }
 
-function renderLbThumbs() {
+function renderLbThumbs(instant) {
   const wrap = document.getElementById('lb-thumbs');
-  // Giới hạn cửa sổ thumbnail quanh ảnh hiện tại để tránh render quá nhiều DOM cùng lúc
-  const WINDOW = 40;
+  // Cửa sổ nhỏ quanh ảnh hiện tại — tải ít ảnh cùng lúc để mở popup không bị giật/chạy ảnh
+  const WINDOW = 10;
   const start = Math.max(0, lbIndex - WINDOW);
   const end = Math.min(currentList.length, lbIndex + WINDOW + 1);
   let html = '';
@@ -378,12 +456,12 @@ function renderLbThumbs() {
     const thumbSrc = p.thumb || '';
     const playIcon = p.type === 'video' ? '<span class="lb-thumb-play">▶️</span>' : '';
     html += `<div class="lb-thumb ${i === lbIndex ? 'active' : ''}" onclick="jumpTo(${i})">
-      ${thumbSrc ? `<img src="${thumbSrc}" alt="" loading="lazy">` : ''}${playIcon}
+      ${thumbSrc ? `<img src="${thumbSrc}" alt="">` : ''}${playIcon}
     </div>`;
   }
   wrap.innerHTML = html;
   const activeEl = wrap.querySelector('.lb-thumb.active');
-  if (activeEl) activeEl.scrollIntoView({ block: 'nearest', inline: 'center' });
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest', inline: 'center', behavior: instant ? 'auto' : 'smooth' });
 }
 
 function jumpTo(idx) {
@@ -391,24 +469,34 @@ function jumpTo(idx) {
   renderLbMedia();
 }
 
-function onLbImgLoad() { const img = document.getElementById('lb-img'); if (img) img.classList.remove('hidden'); document.getElementById('lb-spinner')?.remove(); }
+// Link ảnh chất lượng vừa phải (w1280) — dùng chung endpoint "thumbnail" ổn định & nhanh của Drive
+// thay vì tải ảnh gốc full-size (nặng, chậm). Lấy id trực tiếp từ link thumb nhỏ đã có sẵn.
+function getMediumImgSrc(p) {
+  const m = (p.thumb || '').match(/id=([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1280`;
+  return p.full || p.thumb || '';
+}
+
+function onLbImgLoad() {
+  const img = document.getElementById('lb-img');
+  if (img) img.classList.remove('hidden');
+  document.getElementById('lb-spinner')?.remove();
+}
 
 function onLbImgError() {
   const img = document.getElementById('lb-img');
   if (!img) return;
   if (!img.dataset.fallbackTried) {
-    // Thử lại bằng endpoint "thumbnail" kích thước lớn — ổn định hơn "uc?export=view"
     const p = currentList[lbIndex];
-    const src = img.src || p.thumb || '';
-    const m = src.match(/id=([a-zA-Z0-9_-]+)/) || (p.full || '').match(/\/d\/([a-zA-Z0-9_-]+)/);
+    const m = (img.src || '').match(/id=([a-zA-Z0-9_-]+)/) || (p.full || '').match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (m) {
       img.dataset.fallbackTried = '1';
       img.src = `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1920`;
       return;
     }
   }
-  const sp = document.getElementById('lb-spinner');
-  if (sp) sp.textContent = 'Không tải được ảnh';
+  const errEl = document.getElementById('lb-error-text');
+  if (errEl) errEl.style.display = 'flex';
 }
 
 function lbNav(dir) {
@@ -419,7 +507,7 @@ function lbNav(dir) {
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
-  document.getElementById('lb-media-wrap').innerHTML = '<div class="lb-spinner" id="lb-spinner">Đang tải...</div><img class="lb-img hidden" id="lb-img" src="" alt="" onload="onLbImgLoad()" onerror="onLbImgError()">';
+  document.getElementById('lb-media-wrap').innerHTML = '<img class="lb-img-placeholder" src="" alt=""><img class="lb-img hidden" id="lb-img" src="" alt="" onload="onLbImgLoad()" onerror="onLbImgError()"><div class="lb-error-text" id="lb-error-text">Không tải được ảnh</div>';
   document.getElementById('lb-thumbs').innerHTML = '';
 }
 
